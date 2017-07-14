@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Thu Jun 29 07:26:23 2017
+Created on Sat Jul 15 00:36:13 2017
 
 @author: massimo
 """
@@ -30,19 +30,19 @@ SUP = IOready()
 SUP.build(table=tdata, rows=prods, cols=acts, regcols=reg_acts, regrows=reg_prods, units=units)
 
 SUP.regs
-print("\n\nProduct regions\n\n", SUP.table.index.get_level_values('Reg'),
-      "\n\nProduct names\n\n", SUP.table.index.get_level_values('Prod'), 
-      "\n\nProduct units\n\n", SUP.table.index.get_level_values('Unit'),
+print("\n\nProduct regions\n\n", SUP.table.index.get_level_values(0),
+      "\n\nProduct names\n\n", SUP.table.index.get_level_values(1), 
+      "\n\nProduct units\n\n", SUP.table.index.get_level_values(2),
       "\n\nTable\n\n", SUP.table,
-      "\n\nActivity regions\n\n", SUP.table.columns.get_level_values('Reg'),
-      "\n\nActivity names\n\n", SUP.table.columns.get_level_values('Act'), 
+      "\n\nActivity regions\n\n", SUP.table.columns.get_level_values(0),
+      "\n\nActivity names\n\n", SUP.table.columns.get_level_values(1), 
       "\n\nNr of regions\n\n", SUP.regs)
 
 SUP.table.info()
 
 
-key = [1, 2, 2]
-SUP.square(key)
+key = [1, 2, 2]  # This means the products 2 and 3 are outputs of activity 2
+SUP.square(key)  # test 'IOready.square' method
 SUP.table
 
 
@@ -59,13 +59,14 @@ mydata = pd.DataFrame([[np.NaN, np.NaN, np.NaN, 'IT', 'IT', 'FR', 'FR'],  # tabl
 
 SUP = IOready().fromtable(mydata)
 SUP.regs
-print("\n\nProduct regions\n\n", SUP.table.index.get_level_values('Reg'),
-      "\n\nProduct names\n\n", SUP.table.index.get_level_values('Prod'), 
-      "\n\nProduct units\n\n", SUP.table.index.get_level_values('Unit'),
+print("\n\nProduct regions\n\n", SUP.table.index.get_level_values(0),
+      "\n\nProduct names\n\n", SUP.table.index.get_level_values(1), 
+      "\n\nProduct units\n\n", SUP.table.index.get_level_values(2),
       "\n\nTable\n\n", SUP.table,
-      "\n\nActivity regions\n\n", SUP.table.columns.get_level_values('Reg'),
-      "\n\nActivity names\n\n", SUP.table.columns.get_level_values('Act'), 
+      "\n\nActivity regions\n\n", SUP.table.columns.get_level_values(0),
+      "\n\nActivity names\n\n", SUP.table.columns.get_level_values(1), 
       "\n\nNr of regions\n\n", SUP.regs)
+
 SUP.table.info()
 
 key = [1, 2, 2]  # This means the products 2 and 3 are outputs of activity 2
@@ -73,9 +74,17 @@ SUP.square(key)  # test 'IOready.square' method
 SUP.table
 
 
-# Last, test 'IOready.frommultidf' method
+# Last, test 'IOready.frommultidf' method as well as IOready_inout import export
 # we have a file in exiobase format
 mydata2 = importing((os.getcwd()+'/Test_data/mydata_exioformat.csv'), 'exiobase')
 SUP2 = IOready().frommultidf(mydata2)
 SUP2.table
 SUP2.regs
+exporting(SUP2.table, 'SUP2table.csv')
+
+extensions = importing((os.getcwd()+'/Test_data/exio_extensions_format_test.csv'), 'factor')
+exts = IOready().frommultidf(extensions)
+exts.table
+exts.regs
+exporting(exts.table, 'ext_export.csv', exio = 'extension')  # need to specify this
+

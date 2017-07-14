@@ -52,8 +52,8 @@ class IOready(object):
                    np.array(n_cindex)]
         
         exio_format_table = pd.DataFrame(mydata.values, index = mrindex, columns = mcindex, dtype = float)
-        exio_format_table.index.names = ['Reg','Prod','Unit']
-        exio_format_table.columns.names = ['Reg','Act']
+        #exio_format_table.index.names = ['Reg','Prod','Unit']
+        #exio_format_table.columns.names = ['Reg','Act']
 
         return exio_format_table
     
@@ -85,13 +85,13 @@ class IOready(object):
         
         self.table = exio_format_table
         
-        if len(np.unique(self.table.index.get_level_values('Reg'))) == len(np.unique(self.table.columns.get_level_values('Reg'))):
+        if len(np.unique(self.table.index.get_level_values(0))) == len(np.unique(self.table.columns.get_level_values(0))):
             print("same nr regions in each dimension")
-            self.regs = len(np.unique(self.table.index.get_level_values('Reg')))
+            self.regs = len(np.unique(self.table.index.get_level_values(0)))
 
         print(self.build.__name__, "IO table:",
-              len(self.table.index.get_level_values('Reg')), "rows;",
-              len(self.table.columns.get_level_values('Reg')), "columns")
+              len(self.table.index.get_level_values(0)), "rows;",
+              len(self.table.columns.get_level_values(0)), "columns")
         
         return self
 
@@ -121,13 +121,13 @@ class IOready(object):
         
         self.table = exio_format_table
         
-        if len(np.unique(self.table.index.get_level_values('Reg'))) == len(np.unique(self.table.columns.get_level_values('Reg'))):
+        if len(np.unique(self.table.index.get_level_values(0))) == len(np.unique(self.table.columns.get_level_values(0))):
             print("same nr regions in each dimension")
-            self.regs = len(np.unique(self.table.index.get_level_values('Reg')))
+            self.regs = len(np.unique(self.table.index.get_level_values(0)))
 
         print(self.fromtable.__name__, "IO table:",
-              len(self.table.index.get_level_values('Reg')), "rows;",
-              len(self.table.columns.get_level_values('Reg')), "columns")
+              len(self.table.index.get_level_values(0)), "rows;",
+              len(self.table.columns.get_level_values(0)), "columns")
         
         return self
     
@@ -140,13 +140,13 @@ class IOready(object):
     
         self.table = table
         
-        if len(np.unique(self.table.index.get_level_values('Reg'))) == len(np.unique(self.table.columns.get_level_values('Reg'))):
+        if len(np.unique(self.table.index.get_level_values(0))) == len(np.unique(self.table.columns.get_level_values(0))):
             print("same nr regions in each dimension")
-            self.regs = len(np.unique(self.table.index.get_level_values('Reg')))
+            self.regs = len(np.unique(self.table.index.get_level_values(0)))
 
         print(self.frommultidf.__name__, "IO table:",
-              len(self.table.index.get_level_values('Reg')), "rows;",
-              len(self.table.columns.get_level_values('Reg')), "columns")
+              len(self.table.index.get_level_values(0)), "rows;",
+              len(self.table.columns.get_level_values(0)), "columns")
         
         return self
 
@@ -191,13 +191,13 @@ class IOready(object):
                    np.array(indf[1]),
                    np.array(indf[2])]
         st_copy.index = nmrindex
-        st_copy.index.names = ['Reg','Prod','Unit']
+        #st_copy.index.names = ['Reg','Prod','Unit']
         
         self.table = st_copy
 
         print(self.square.__name__, "IO table:",
-              len(self.table.index.get_level_values('Reg')), "rows;",
-              len(self.table.columns.get_level_values('Reg')), "columns")
+              len(self.table.index.get_level_values(0)), "rows;",
+              len(self.table.columns.get_level_values(0)), "columns")
         
         return self
 
@@ -291,7 +291,7 @@ class IOready(object):
         self.table = USEcg  # ;print(len(reg_list), 'regions') # Debug
 
         print(self.integrate_inv_CF.__name__, "IO table:",
-              len(self.table.index.get_level_values('Reg')), "rows;",
-              len(self.table.columns.get_level_values('Reg')), "columns")
+              len(self.table.index.get_level_values(0)), "rows;",
+              len(self.table.columns.get_level_values(0)), "columns")
         
         return self

@@ -32,12 +32,23 @@ def importing(filename, celltype):
             column 2: text, ProductTypeName
             column 5: text, UnitCode
     
-        'exiobase': text file in exiobase format:
+        'exiobase': text file in exiobase format (used for SUP, USE, FD, emissions, resources):
             row 1: text, CountryCode
-            row 2: text, IndustryTypename (or FinalDemandTypeName)
-            column 1: text, CountryCode
-            column 2: text, IndustryTypeName (or FinalDemandTypeName)
+            row 2: text, ActivityTypename
+            column 1: text, CountryCode (or Comparment)
+            column 2: text, ProductTypeName (or Substance)
             column 3: text, UnitCode
+            
+        Setting any other value allows importing 
+        exiobase format used for factors and materials, which is:
+            row 1: text, CountryCode
+            row 2: text, ActivityTypename
+            column 2: text, PhysicalTypeName (or FactorInputTypeNamey)
+            column 3: text, UnitCode
+            
+            The factor name will be listed in the first index level
+            
+            
     '''
 
     
@@ -75,13 +86,13 @@ def importing(filename, celltype):
                    np.array(n_cindex)]
         
         exio_format_table = pd.DataFrame(mydata.values, index = mrindex, columns = mcindex, dtype = float)
-        exio_format_table.index.names = ['Reg','Prod','Unit']
-        exio_format_table.columns.names = ['Reg','Act']
+        #exio_format_table.index.names = ['Reg','Prod','Unit']
+        #exio_format_table.columns.names = ['Reg','Act']
         
         tot_output = MRtable.iloc[1,5:]        
         supply = pd.DataFrame(data=tot_output.T.values, columns=["Supply"],
                                 index=mcindex, dtype=float).T
-        supply.columns.names = ['Reg','Act']
+        #supply.columns.names = ['Reg','Act']
         
         MRtable =  {'table': exio_format_table, 'diag': supply }
         print('Done, this is a dict of: "table", "diag"')
@@ -107,13 +118,13 @@ def importing(filename, celltype):
                    np.array(n_cindex)]
         
         exio_format_table = pd.DataFrame(mydata.values, index = mrindex, columns = mcindex, dtype = float)
-        exio_format_table.index.names = ['Reg','Prod','Unit']
-        exio_format_table.columns.names = ['Reg','Act']
+        #exio_format_table.index.names = ['Reg','Prod','Unit']
+        #exio_format_table.columns.names = ['Reg','Act']
         
         tot_output = MRtable.iloc[1,5:]        
         supply = pd.DataFrame(data=tot_output.T.values, columns=["Supply"],
                                 index=mcindex, dtype=float).T
-        supply.columns.names = ['Reg','Act']
+        #supply.columns.names = ['Reg','Act']
         
         MRtable =  {'table': exio_format_table, 'diag': supply }
         print('Done, this is a dict of: "table", "diag"')
@@ -124,8 +135,8 @@ def importing(filename, celltype):
         print('Importing exiobasetxt file...')
         MRtable = pd.read_table(filename, header = [0,1], index_col = [0,1,2], dtype = object)
         MRtable = MRtable.astype(float) # didn't work with read_table
-        MRtable.index.names = ['Reg','Prod','Unit']
-        MRtable.columns.names = ['Reg','Act']
+        #MRtable.index.names = ['Reg','Prod','Unit']
+        #MRtable.columns.names = ['Reg','Act']
         print('Done, this is a multi-index pd.DataFrame object!')
 
     elif celltype == 'exiobase' and filename[-3:] == "csv": # semicolon as separator!
@@ -133,13 +144,36 @@ def importing(filename, celltype):
         print('Importing exiobasecsv file...')
         MRtable = pd.read_csv(filename, header = [0,1], index_col = [0,1,2], sep = ";", dtype = object)
         MRtable = MRtable.astype(float)
-        MRtable.index.names = ['Reg','Prod','Unit']
-        MRtable.columns.names = ['Reg','Act']
+        #MRtable.index.names = ['Reg','Prod','Unit']
+        #MRtable.columns.names = ['Reg','Act']
+        print('Done, this is a multi-index pd.DataFrame object!')
+        
+    elif celltype != 'exiobase' and celltype != 'single' and celltype != 'multi' and filename[-3:] == "txt":
+
+        print('Importing extensiontxt file...')
+        MRtable = pd.read_table(filename, header = [0,1], index_col = [0,1], dtype = object)
+        MRtable = pd.read_csv(filename, header = [0,1], index_col = [0,1], sep = ";", dtype = object)
+        MRtable = MRtable.astype(float) # didn't work with read_table
+        MRtable['extension'] = celltype
+        MRtable.set_index('extension', append=True, inplace=True)
+        MRtable = MRtable.reorder_levels(['extension', 0, 1])
+        MRtable.index.names = [None, None, None]
+        print('Done, this is a multi-index pd.DataFrame object!')
+
+    elif celltype != 'exiobase' and celltype != 'single' and celltype != 'multi' and filename[-3:] == "csv": # semicolon as separator!
+
+        print('Importing extensioncsv file...')
+        MRtable = pd.read_csv(filename, header = [0,1], index_col = [0,1], sep = ";", dtype = object)
+        MRtable = MRtable.astype(float) # didn't work with read_table
+        MRtable['extension'] = celltype
+        MRtable.set_index('extension', append=True, inplace=True)
+        MRtable = MRtable.reorder_levels(['extension', 0, 1])
+        MRtable.index.names = [None, None, None]
         print('Done, this is a multi-index pd.DataFrame object!')
 
     return MRtable
 
-def exporting(df, filename):
+def exporting(df, filename, exio = 'iotable'):
     
     '''Function to export to exiobase format
     because standard to_csv does not handle well the multi-index
@@ -149,7 +183,7 @@ def exporting(df, filename):
     'filename' [text, string] e.g. "myexport.csv"
     '''
     
-    one = pd.DataFrame([[np.nan,np.NaN,np.nan],[np.nan,np.nan,np.nan]])
+    one = pd.DataFrame([[np.nan,np.nan,np.nan],[np.nan,np.nan,np.nan]])
     two = pd.DataFrame(df.columns.tolist()).T
     two.reset_index(drop=True, inplace=True)
     three = pd.DataFrame(df.index.tolist())
@@ -158,6 +192,12 @@ def exporting(df, filename):
     five = pd.concat([one, two], axis = 1)
     six = pd.concat([three, four], axis = 1)
     seven = pd.concat([five, six], axis = 0)
+    
+    
+    if exio == 'extension':
+        seven = seven.drop(0,1)
+    else:
+        next
     
     if filename[-3:] == "csv":
         seven.to_csv(filename, index = False, header = False, sep = ";")
