@@ -8,6 +8,7 @@ Created on Wed Jul  5 08:37:03 2017
 
 import pandas as pd
 import numpy as np
+import os
 from IOready import IOready
 from IOready_inout import *
 
@@ -48,43 +49,36 @@ USE.integrate_inv_CF(FD, 'act2', VAact, 'VAname')
 print(USE.table)
 
         
+# Test on exiobase mock-up version
+# Import USE and FD tables (already squared)
+USEdata = importing((os.getcwd()+'/Test_data/exio_USEsq.csv'), 'exiobase')
 
-# Test on exiobase
+USEdata.info()
+USEdata.iloc[30:33,0] # OK, same as in excel file used for testing
+print(USEdata.shape)
 
-# Import HIOTand FD tables (already squared)
-HIOTdata = importing('/Users/massimo/Documents/AAU/Research/Databases/exiobase_vtext/IOready_MR_HUSE_2011_v3.3.11_final_HIOT_zerodiag.csv', 'exiobase')
-
-HIOTdata.info()
-HIOTdata.iloc[30:33,0] # OK, same as in excel file used for testing
-print(HIOTdata.shape)
-
-FDdata = importing('/Users/massimo/Documents/AAU/Research/Databases/exiobase_vtext/IOready_MR_HUSE_2011_v3.3.11_final_FDsq.csv', 'exiobase')
+FDdata = importing((os.getcwd()+'/Test_data/exio_FDsq.csv'), 'exiobase')
 print(FDdata.shape)
 
-VAactdata = importing('/Users/massimo/Documents/AAU/Research/Databases/exiobase_vtext/IOready_MR_HIOT_2011_v3.3.11_VA_act.csv', 'exiobase')
+VAactdata = importing((os.getcwd()+'/Test_data/exio_VAact.csv'), 'exiobase')
 print(VAactdata.shape)
 
 # Use IOready class
-HIOT_original = IOready().frommultidf(HIOTdata)
-HIOT = IOready().frommultidf(HIOTdata)
+USE_original = IOready().frommultidf(USEdata)
+USE = IOready().frommultidf(USEdata)
 FD = IOready().frommultidf(FDdata)
 VAact = IOready().frommultidf(VAactdata)
 
-print("HIOT_original", HIOT_original.table.shape)
-print("HIOT", HIOT.table.shape)
+print("USE_original", USE_original.table.shape)
+print("USE", USE.table.shape)
 print("FD", FD.table.shape)
 print("VAact", VAact.table.shape)
 
-
 # Integrate investments with the 'capital formation' method.
-
-HIOT.integrate_inv_CF(FD, 'Gross fixed capital formation', VAact, 'Operating surplus: Consumption of fixed capital')
-print("HIOToriginal", HIOT_original.table.shape)
-print("HIOT", HIOT.table.shape)
+USE.integrate_inv_CF(FD, 'Gross fixed capital formation', VAact, 'Operating surplus: Consumption of fixed capital')
+print("USEoriginal", USE_original.table.shape)
+print("USE", USE.table.shape)
 print("FD", FD.table.shape)  # FD is still the same
 
-print(HIOT_original.table.iloc[31:34,0:4])
-print(HIOT.table.iloc[31:34,0:4])
-
-HIOT_original.table.iloc[31:34,0:4] == HIOT.table.iloc[31:34,0:4]
+USE_original.table.iloc[31:34,0:4] == USE.table.iloc[31:34,0:4]
 # Good, it worked
