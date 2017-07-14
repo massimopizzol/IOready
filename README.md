@@ -9,13 +9,13 @@ For calculations and further analysis, and on the same topic as mrio and IO anal
 
 
 This repository included:
-- __IOready_inout.py__: functions to import and export mrio tables in different formats (single, multi, exiobase)and from files of different formats (.txt, .csv).
++ __IOready_inout.py__: functions to import and export mrio tables in different formats (single, multi, exiobase)and from files of different formats (.txt, .csv).
 
-- __IOready.py__: a Python Class to do some stuff with these tables, in particular:
- - aggregate a non-square mrio table to get a square one based on a key
- - correct a table for investments using value added extensions
++ __IOready.py__: a Python Class to do some stuff with these tables, in particular:
+    - aggregate a non-square mrio table to get a square one based on a key
+    - correct a table for investments using value added extensions
 
 
-- Some __test scripts__ where the principles of the above mentioned functions is explained (right now only in .py format, soon to be in Jupyter Notebook format)
++ Some __test scripts__ where the principles of the above mentioned functions is explained (right now only in .py format, soon to be in Jupyter Notebook format)
 
 At present stage it is not possible to perform other operations.
