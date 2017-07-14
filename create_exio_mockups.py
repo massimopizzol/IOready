@@ -26,7 +26,6 @@ SUP = pd.DataFrame(np.random.rand(9600//48*3,7872//48*3), dtype=float)
 FD = pd.DataFrame(np.random.rand(9600//48*3,288//48*3), dtype=float)
 VAact = pd.DataFrame(np.random.rand(23,7872//48*3), dtype=float)
 
-
 print(SUP.shape, SUP.shape, FD.shape, VAact.shape)
 
 # Get random key for squaring
@@ -34,7 +33,7 @@ print(SUP.shape, SUP.shape, FD.shape, VAact.shape)
 key_vec = [1]*37 + list(range(2,(200-35)))
 len(key_vec)
 
-# need to give the names to my regions.
+# need to give the names to my three regions...here my favourite ones
 countries_codes = ['IT', 'DK', 'EU']
 
 # building the labels for each table, it's the boring part...
@@ -88,7 +87,6 @@ exporting(VAacti.table, (os.getcwd()+'/Test_data/exio_VAact.csv'))
 # Square SUP
 SUPi.square(key_vec)
 SUPi.table.info() # it's square!
-exporting(SUPi.table, (os.getcwd()+'/Test_data/exio_SUPsq.csv'))
 
 # Square USE
 USEi.square(key_vec)
